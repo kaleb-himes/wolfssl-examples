@@ -48,11 +48,12 @@ int KALEB_fake_hardware_call(char* out, char* in, int inSz);
 
 int main(int argc, char** argv)
 {
+    int                ret = 0;
+#ifdef WOLF_CRYPTO_CB
     int                sockfd;
     struct sockaddr_in servAddr;
     char               buff[256];
     size_t             len;
-    int                ret;
     int devId = 1;
     char* CbNote = "made it into the callback";
 
@@ -186,9 +187,13 @@ ctx_cleanup:
 socket_cleanup:
     close(sockfd);          /* Close the connection to the server       */
 end:
+#else
+    printf("Please configure wolfSSL with --enable-cryptocb and try again\n");
+#endif /* WOLF_CRYPTO_CB */
     return ret;               /* Return reporting a success               */
 }
 
+#ifdef WOLF_CRYPTO_CB
 void error_out(char* msg, int err)
 {
     printf("Failed at %s with code %d\n", msg, err);
@@ -287,4 +292,4 @@ int KALEB_fake_hardware_call(char* out, char* in, int inSz)
                     * in this example */
     return 0; /* fake success */
 }
-
+#endif /* WOLF_CRYPTO_CB */
